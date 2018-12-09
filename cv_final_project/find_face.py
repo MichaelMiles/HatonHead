@@ -1,12 +1,52 @@
 import numpy as np
 import cv2 as cv
+from imutils import face_utils
+import dlib
+import sys
+
+
+
+def landmark_pic():
+    p = "shape_predictor_5_face_landmarks.dat"
+    detector = dlib.get_frontal_face_detector()
+    predictor = dlib.shape_predictor(p)
+
+    # Getting out image by webcam
+    image = cv.imread('wolfs.jpg')
+    # Converting the image to gray scale
+    gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+
+    # Get faces into webcam's image
+    rects = detector(gray, 0)
+
+    # For each detected face, find the landmark.
+    for (i, rect) in enumerate(rects):
+        # Make the prediction and transfom it to numpy array
+        shape = predictor(gray, rect)
+        shape = face_utils.shape_to_np(shape)
+
+        # Draw on our image, all the finded cordinate points (x,y)
+        for (x, y) in shape:
+            print x, y
+            cv.circle(image, (x, y), 2, (0, 255, 0), -1)
+
+
+    # Show the image
+    cv.namedWindow('image', cv.WINDOW_NORMAL)
+    cv.imshow('image',image)
+    cv.waitKey(0)
+    cv.destroyAllWindows()
 
 if __name__ == "__main__":
+
+    landmark_pic()
+    sys.exit(0)
+    
     # load the classifier
-    face_cascade = cv.CascadeClassifier('/Users/michaelfang/git/opencv_lib/opencv/data/haarcascades/haarcascade_frontalface_default.xml')
-    eye_cascade = cv.CascadeClassifier('/Users/michaelfang/git/opencv_lib/opencv/data/haarcascades/haarcascade_eye.xml')
-    mouth_cascade = cv.CascadeClassifier('/Users/michaelfang/git/opencv_lib/opencv/data/haarcascades/haarcascade_mcs_mouth.xml')
-    nose_cascade = cv.CascadeClassifier('/Users/michaelfang/git/opencv_lib/opencv/data/haarcascades/haarcascade_mcs_nose.xml')
+    face_cascade = cv.CascadeClassifier('/Users/michaelfang/git/HatonHead/cv_final_project/haarcascades/haarcascade_frontalface_default.xml')
+    eye_cascade = cv.CascadeClassifier('/Users/michaelfang/git/HatonHead/cv_final_project/haarcascades/haarcascade_eye.xml')
+    mouth_cascade = cv.CascadeClassifier('/Users/michaelfang/git/HatonHead/cv_final_project/haarcascades/haarcascade_mcs_mouth.xml')
+    nose_cascade = cv.CascadeClassifier('/Users/michaelfang/git/HatonHead/cv_final_project/haarcascades/haarcascade_mcs_nose.xml')
 
     img = cv.imread('couple.jpg')
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)

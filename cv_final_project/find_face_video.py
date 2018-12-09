@@ -27,8 +27,9 @@ while True:
 
         # Draw on our image, all the finded cordinate points (x,y)
         for (x, y) in shape:
-            cv2.circle(image, (x, y), 2, (255, 255, 255), -1)
-        
+            print x, y
+            cv2.circle(image, (x, y), 2, (0, 255, 0), -1)
+
 
     # Show the image
     cv2.imshow("Output", image)
