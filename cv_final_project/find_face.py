@@ -7,12 +7,12 @@ import sys
 
 
 def landmark_pic():
-    p = "shape_predictor_5_face_landmarks.dat"
+    p = "shape_predictor_68_face_landmarks.dat"
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor(p)
 
     # Getting out image by webcam
-    image = cv.imread('wolfs.jpg')
+    image = cv.imread('little.jpg')
     # Converting the image to gray scale
     gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 
@@ -26,9 +26,16 @@ def landmark_pic():
         shape = face_utils.shape_to_np(shape)
 
         # Draw on our image, all the finded cordinate points (x,y)
+        # 34 is the nose
+        # 17 is the right-most one
+        # 1 is the left-most one
+        i = 1;
         for (x, y) in shape:
-            print x, y
-            cv.circle(image, (x, y), 2, (0, 255, 0), -1)
+
+            if i == 1 or i == 17 or i == 34:
+                print x, y, i
+                cv.circle(image, (x, y), 2, (0, 255, 0), -1)
+            i += 1
 
 
     # Show the image
@@ -41,7 +48,7 @@ if __name__ == "__main__":
 
     landmark_pic()
     sys.exit(0)
-    
+
     # load the classifier
     face_cascade = cv.CascadeClassifier('/Users/michaelfang/git/HatonHead/cv_final_project/haarcascades/haarcascade_frontalface_default.xml')
     eye_cascade = cv.CascadeClassifier('/Users/michaelfang/git/HatonHead/cv_final_project/haarcascades/haarcascade_eye.xml')
