@@ -9,7 +9,7 @@
 #define FACE_CUTOFF 0.7
 #define LARGE_FACTOR 0.65
 #define SMALL_FACTOR 0.75
-#define STARUATION_CUTOFF 0.01 
+#define STARUATION_CUTOFF 0.03 
 #define EXTENDER 0
 image wholeimg;
 
