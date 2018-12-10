@@ -6,10 +6,10 @@
 
 #include "image.h"
 
-#define FACE_CUTOFF 0.8
-#define LARGE_FACTOR 0.63
-#define SMALL_FACTOR 0.90
-#define STARUATION_CUTOFF 0.05 
+#define FACE_CUTOFF 0.7
+#define LARGE_FACTOR 0.65
+#define SMALL_FACTOR 0.75
+#define STARUATION_CUTOFF 0.03 
 #define EXTENDER 0
 image wholeimg;
 
@@ -23,45 +23,48 @@ float get_lightness(image im, int* c){
 
 int addHat(int* left_bound, int* right_bound, int* mouth){
 //int[0,1]= {x,y}
-  int left = mouth[0] - left_bound[0];
-  int right = right_bound[0] - mouth[0];
+  double left = mouth[0] - left_bound[0]+0.0;
+  double right = right_bound[0] - mouth[0]+0.0;
   char* hat_img;
   double ratio = 1/SMALL_FACTOR;
   // figure out which face to use
   if (left > right){
     // we need a right hat
-    if (left * 0.8 > right){
+    if (left * FACE_CUTOFF > right){
         // extra right
         hat_img = "RR.jpg";
-        ratio = 1/LARGE_FACTOR;
+        ratio = 1.0/LARGE_FACTOR;
     }else {
         // normal right
-        hat_img = "R.jpg";
+        hat_img = "RRRR.jpg";
     }
     
   } else {
     // we need a left hat 
-    if (right * 0.8 > left){
+    if (right * FACE_CUTOFF > left){
         // extra left
-        ratio = 1/LARGE_FACTOR;
+        ratio = 1.0/LARGE_FACTOR;
         hat_img = "LL.jpg";
     }else {
         // normal left
-        hat_img = "L.jpg";
+        hat_img = "LLLL.jpg";
     }
     
   }
     image hat = load_image(hat_img);
-    double pre_atanVal = abs((left_bound[1]-right_bound[1]+0.0)/(right_bound[0]-left_bound[0]+0.0));
-    double atanVal = abs(atan(pre_atanVal));
+    double pre_atanVal = fabs((left_bound[1]-right_bound[1]+0.0)/(right_bound[0]-left_bound[0]+0.0));
+    double atanVal = fabs(atan(pre_atanVal));
     double angle = atanVal;
     if (left_bound[1]>right_bound[1]){
        // angle is different sign
        angle *= -1;
     }
     // resize the hat.
-    int new_width = (int)floor(left_bound[1]-right_bound[1]+0.0)/(sin(atanVal)*ratio);
+    double sineval = cos(atanVal);
+    double pre_new_width = right_bound[0]-left_bound[0]+0.0;
+    int new_width = (int)floor(pre_new_width/sineval*ratio);
     int new_height = (int)floor(new_width*1.0/hat.w * hat.h);
+    printf("resize from (%d,%d) to (%d,%d)\n", hat.w, hat.h, new_width, new_height);
     image resized_hat = bilinear_resize(hat, new_width, new_height);
     // rotate the hat
     image full_light_hat = rotate(resized_hat, angle);
@@ -80,8 +83,10 @@ int addHat(int* left_bound, int* right_bound, int* mouth){
       }  
     }
     hsv_to_rgb(full_light_hat);
+    save_image(resized_hat, "./ImageWithHat/try");
     // put the hat at the position.
-    int hat_bot_offset = (mouth[1]-left_bound[1]+mouth[1]-right_bound[1])/2;
+    int hat_bot_offset = (mouth[1]-left_bound[1]+mouth[1]-right_bound[1])*11/8;
+    int center_offset = (int)floor((right - left)/2);
     for (int j=0; j<full_light_hat.h; j++){
       for (int i=0; i<full_light_hat.w; i++){
          // locate the pixel in the image
@@ -92,7 +97,7 @@ int addHat(int* left_bound, int* right_bound, int* mouth){
              continue; // it is a white region.
          }
          // set the pixels
-         int puthat_x = mouth[0] - full_light_hat.w/2+i;
+         int puthat_x = mouth[0] + center_offset- full_light_hat.w/2+i;
          int puthat_y = mouth[1] - hat_bot_offset-full_light_hat.h/2+j;
          set_pixel(wholeimg, puthat_x, puthat_y, 0, r);
          set_pixel(wholeimg, puthat_x, puthat_y, 1, g);
@@ -116,23 +121,28 @@ int intparser(char* arg){
 }
 
 int main(int argc, char** argv){
-  for (int i=0; i<argc; i++){
-     printf("I got %s\n", argv[i]);
-  }
+ // for (int i=0; i<argc; i++){
+  //   printf("I got %s\n", argv[i]);
+ // }
   wholeimg = load_image(argv[argc-1]);
+  printf("image loaded\n");
   for (int i=1; i<argc-1; i+=6){
    // for each person
-   int left[] = int[2];
+   int left[2];
    left[0] = intparser(argv[i]);
    left[1] = intparser(argv[i+1]);
-   int mouth[] = int[2];
-   mouth[0] = intparser(argv[i+2]);
-   mouth[1] = intparser(argv[i+3]);
-   int right[] = int[2];
-   right[0] = intparser(argv[i+4]);
-   right[1] = intparser(argv[i+5]);
+   int right[2];
+   right[0] = intparser(argv[i+2]);
+   right[1] = intparser(argv[i+3]);
+   int mouth[2];
+   mouth[0] = intparser(argv[i+4]);
+   mouth[1] = intparser(argv[i+5]);
+printf("Found a face!  left = {%d,%d}  right={%d,%d}  mouth={%d,%d}\n", left[0], left[1], right[0], right[1], mouth[0], mouth[1]);
    addHat(left, right, mouth);
+printf("Hat added to that face!\n");
+   
   }
-  save_image(whole, "TEST_OUTPUT");
+  save_image(wholeimg, "./ImageWithHat/TEST_OUTPUT");
+  printf("image saved!");
 
 }
