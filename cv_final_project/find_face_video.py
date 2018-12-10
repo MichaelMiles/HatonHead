@@ -49,7 +49,7 @@ if __name__ == "__main__":
     #
     # hat_col, hat_row = hat.size
 
-    hat = cv2.imread('UWHAT.jpeg')
+    hat = cv2.imread('UWGlass.jpg')
     # add an alpha channel
     # hat = cv2.cvtColor(hat, cv2.COLOR_BGR2BGRA)
     hat_row, hat_col = hat.shape[0], hat.shape[1]
@@ -81,10 +81,10 @@ if __name__ == "__main__":
             # Make the prediction and transfom it to numpy array
             shape = predictor(gray, rect)
             shape = face_utils.shape_to_np(shape)
-            cv2.circle(image, top_left, 2, (0, 255, 0), -1)
-            cv2.circle(image, top_right, 2, (0, 255, 0), -1)
-            cv2.circle(image, bottom_left, 2, (0, 255, 0), -1)
-            cv2.circle(image, bottom_right, 2, (0, 255, 0), -1)
+            # cv2.circle(image, top_left, 2, (0, 255, 0), -1)
+            # cv2.circle(image, top_right, 2, (0, 255, 0), -1)
+            # cv2.circle(image, bottom_left, 2, (0, 255, 0), -1)
+            # cv2.circle(image, bottom_right, 2, (0, 255, 0), -1)
 
 
             # for each detected face, we need to create a resized hat
@@ -92,15 +92,15 @@ if __name__ == "__main__":
             temp_hat = cv2.resize(hat, (int(hat_col * pp), int(hat_row * pp)))
 
             temp_hat_col, temp_hat_row = temp_hat.shape[0], temp_hat.shape[1]
-            result_img = putHat(result_img, temp_hat, int(rect.left()), int(rect.top() - temp_hat_row))
+            result_img = putHat(result_img, temp_hat, int(shape[0][0]), int(shape[0][1]))
 
-            j = 1
             # Draw on our image, all the finded cordinate points (x,y)
-            for (x, y) in shape:
-                if j == 1 or j == 17 or j == 34:
-                    cv2.circle(image, (x, y), 2, (255, 255, 255), -1)
-                j += 1
-
+            # j = 1
+            # for (x, y) in shape:
+            #     if j == 1 or j == 17 or j == 34:
+            #         cv2.circle(image, (x, y), 2, (255, 255, 255), -1)
+            #     j += 1
+            #
 
 
         # Show the image
