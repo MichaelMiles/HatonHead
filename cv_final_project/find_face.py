@@ -38,10 +38,7 @@ def landmark_pic(name):
 
 
     # Show the image
-    cv.namedWindow('image', cv.WINDOW_NORMAL)
-    cv.imshow('image',image)
-    cv.waitKey(0)
-    cv.destroyAllWindows()
+  
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
@@ -82,7 +79,4 @@ if __name__ == "__main__":
             cv.rectangle(img, (mx, my), (mx + mw, my + mh), (0, 0, 0), 2)
             break
 
-    cv.namedWindow('image', cv.WINDOW_NORMAL)
-    cv.imshow('image',img)
-    cv.waitKey(0)
-    cv.destroyAllWindows()
+
