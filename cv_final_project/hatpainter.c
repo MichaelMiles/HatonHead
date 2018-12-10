@@ -7,7 +7,7 @@
 #include "image.h"
 
 #define FACE_CUTOFF 0.7
-#define LARGE_FACTOR 0.65
+#define LARGE_FACTOR 0.60
 #define SMALL_FACTOR 0.75
 #define STARUATION_CUTOFF 0.03 
 #define EXTENDER 0
@@ -64,7 +64,7 @@ int addHat(int* left_bound, int* right_bound, int* mouth){
     double pre_new_width = right_bound[0]-left_bound[0]+0.0;
     int new_width = (int)floor(pre_new_width/sineval*ratio);
     int new_height = (int)floor(new_width*1.0/hat.w * hat.h);
-    printf("resize from (%d,%d) to (%d,%d)\n", hat.w, hat.h, new_width, new_height);
+   // printf("resize from (%d,%d) to (%d,%d)\n", hat.w, hat.h, new_width, new_height);
     image resized_hat = bilinear_resize(hat, new_width, new_height);
     // rotate the hat
     image full_light_hat = rotate(resized_hat, angle);
@@ -83,10 +83,10 @@ int addHat(int* left_bound, int* right_bound, int* mouth){
       }  
     }
     hsv_to_rgb(full_light_hat);
-    save_image(resized_hat, "./ImageWithHat/try");
+   // save_image(resized_hat, "./ImageWithHat/try");
     // put the hat at the position.
     int hat_bot_offset = (mouth[1]-left_bound[1]+mouth[1]-right_bound[1])*11/8;
-    int center_offset = (int)floor((right - left)/2);
+    int center_offset = (int)floor((right - left)/2)*2/3;
     for (int j=0; j<full_light_hat.h; j++){
       for (int i=0; i<full_light_hat.w; i++){
          // locate the pixel in the image
