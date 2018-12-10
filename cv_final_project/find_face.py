@@ -6,13 +6,13 @@ import sys
 
 
 
-def landmark_pic():
+def landmark_pic(name):
     p = "shape_predictor_68_face_landmarks.dat"
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor(p)
 
     # Getting out image by webcam
-    image = cv.imread('little.jpg')
+    image = cv.imread(name)
     # Converting the image to gray scale
     gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 
@@ -29,13 +29,12 @@ def landmark_pic():
         # 34 is the nose
         # 17 is the right-most one
         # 1 is the left-most one
-        i = 1;
+        j = 1;
         for (x, y) in shape:
-
-            if i == 1 or i == 17 or i == 34:
-                print x, y, i
+            if j == 1 or j == 17 or j == 34:
+                print x, y
                 cv.circle(image, (x, y), 2, (0, 255, 0), -1)
-            i += 1
+            j += 1
 
 
     # Show the image
@@ -45,8 +44,11 @@ def landmark_pic():
     cv.destroyAllWindows()
 
 if __name__ == "__main__":
-
-    landmark_pic()
+    if len(sys.argv) == 1:
+        print "Please enter your image file name"
+        sys.exit(0)
+    ImgName = sys.argv[1]
+    landmark_pic(ImgName)
     sys.exit(0)
 
     # load the classifier
