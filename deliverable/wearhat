@@ -1,0 +1,4 @@
+make clean  
+make
+chmod +x hatpainter
+./hatpainter $(python find_face.py $1) $1
